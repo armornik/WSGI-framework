@@ -9,4 +9,4 @@ class Index:
 
 class About:
     def __call__(self):
-        return '200 OK', render('about')
+        return '200 OK', render('about.html')
