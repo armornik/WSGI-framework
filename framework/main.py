@@ -1,3 +1,4 @@
+import inspect
 import quopri
 from framework.framework_requests import GetRequest, PostRequest
 
@@ -43,6 +44,7 @@ class Framework:
             view = PageNotFound404()
 
         # Run controller
+        print(f'inspect={inspect.getfullargspec(view)}')
         code, body = view(request)
         start_response(code, [('Content-Type', 'text/html')])
         return [body.encode('utf-8')]

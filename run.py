@@ -1,6 +1,6 @@
 from wsgiref.simple_server import make_server
 from framework.main import Framework
-from urls import routes
+from urls_as_django import routes
 
 # Create object WSGI-framework
 application = Framework(routes)
