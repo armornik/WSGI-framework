@@ -4,7 +4,7 @@ from framework.framework_requests import GetRequest, PostRequest
 
 
 class PageNotFound404:
-    def __call__(self):
+    def __call__(self, request):
         return '404 WHAT', '404 PAGE Not found'
 
 
