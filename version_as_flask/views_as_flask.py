@@ -1,7 +1,8 @@
 from datetime import date
 
 from framework.templator import render
-from components_common.models import Engine
+from components_common.cbv import ListView, CreateView
+from components_common.models_for_flask import Engine
 from version_as_flask.components.decorators import AppRoute
 
 
@@ -126,3 +127,43 @@ class CategoryList:
     def __call__(self, request):
         return '200 OK', render('category_list.html',
                                 objects_list=site.categories)
+
+
+# Controller-class page 'Create student'
+@AppRoute(routes=routes, url='/create-student/')
+class StudentCreateView(CreateView):
+    template_name = 'create_student.html'
+
+    def create_obj(self, data: dict):
+        name = data['name']
+        name = site.decode_value(name)
+        new_obj = site.create_user('student', name)
+        site.students.append(new_obj)
+
+
+# Controller-class page 'Add student on course'
+@AppRoute(routes=routes, url='/add-student/')
+class AddStudentByCoursesCreateView(CreateView):
+    template_name = 'add_student.html'
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['courses'] = site.courses
+        context['students'] = site.students
+        return context
+
+    def create_obj(self, data: dict):
+        course_name = data['course_name']
+        course_name = site.decode_value(course_name)
+        course = site.get_course(course_name)
+        student_name = data['student_name']
+        student_name = site.decode_value(student_name)
+        student = site.get_student(student_name)
+        course.add_student(student)
+
+
+# Controller-class page 'List student'
+@AppRoute(routes=routes, url='/student-list/')
+class StudentListView(ListView):
+    queryset = site.students
+    template_name = 'student_list.html'
