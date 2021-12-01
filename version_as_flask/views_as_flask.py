@@ -2,12 +2,18 @@ from datetime import date
 
 from framework.templator import render
 from components_common.cbv import ListView, CreateView
-from components_common.models_for_flask import Engine
-from version_as_flask.components.decorators import AppRoute
+from components_common.models import Engine, MapperRegistry
+from components_common.decorators import AppRoute
+from components_common.unit_of_work import UnitOfWork
 
 
 site = Engine()
 routes = {}  # Global dict - fill with @AppRoute - object class
+
+# Work with one transaction in one thread
+UnitOfWork.new_current()
+# Привязка к реестру
+UnitOfWork.get_current().set_mapper_registry(MapperRegistry)
 
 
 # Class-controller Main page
@@ -139,6 +145,8 @@ class StudentCreateView(CreateView):
         name = site.decode_value(name)
         new_obj = site.create_user('student', name)
         site.students.append(new_obj)
+        new_obj.mark_new()
+        UnitOfWork.get_current().commit()
 
 
 # Controller-class page 'Add student on course'
@@ -165,5 +173,10 @@ class AddStudentByCoursesCreateView(CreateView):
 # Controller-class page 'List student'
 @AppRoute(routes=routes, url='/student-list/')
 class StudentListView(ListView):
-    queryset = site.students
+    # Without database
+    # queryset = site.students
     template_name = 'student_list.html'
+
+    def get_queryset(self):
+        mapper = MapperRegistry.get_current_mapper('student')
+        return mapper.all()
