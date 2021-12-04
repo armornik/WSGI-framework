@@ -2,9 +2,6 @@
 {% block title %}
 Главная страница
 {% endblock %}
-{% block style %}
-	{% include "inc-style.html" %}
-{% endblock %}
 {% block menu %}
 	{% include "inc-menu.html" %}
 {% endblock %}
@@ -33,5 +30,8 @@
 		<li>
 			<a href="/add-student/">Добавить студента на курс</a>
 		</li>
+	</div>
+	<div>
+		<p><img src="{{ static }}images/chef-3.jpg" alt="Picture"></p>
 	</div>
 {% endblock %}
